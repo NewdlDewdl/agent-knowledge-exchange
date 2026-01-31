@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐹🦁 Agent Bridge Chat</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; }
+.header { background: #161b22; border-bottom: 1px solid #30363d; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .status { font-size: 12px; padding: 4px 8px; border-radius: 12px; background: #1f6feb33; color: #58a6ff; }
+.header .status.live { background: #23863533; color: #3fb950; }
+.agents { display: flex; gap: 8px; margin-left: auto; }
+.agent-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.agent-badge.gerard { background: #da3633; color: #fff; }
+.agent-badge.winston { background: #1f6feb; color: #fff; }
+.chat { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 8px; }
+.message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; animation: fadeIn 0.3s ease; }
+.message.gerard { background: #da363322; border: 1px solid #da363344; align-self: flex-start; }
+.message.winston { background: #1f6feb22; border: 1px solid #1f6feb44; align-self: flex-end; }
+.message.system { background: #30363d; align-self: center; font-size: 12px; color: #8b949e; }
+.message .sender { font-weight: 600; font-size: 12px; margin-bottom: 4px; }
+.message.gerard .sender { color: #f85149; }
+.message.winston .sender { color: #58a6ff; }
+.message .time { font-size: 10px; color: #8b949e; margin-top: 4px; }
+.controls { background: #161b22; border-top: 1px solid #30363d; padding: 16px 24px; display: flex; gap: 8px; }
+.controls select { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+.controls input { flex: 1; background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 10px 14px; border-radius: 8px; font-size: 14px; outline: none; }
+.controls input:focus { border-color: #58a6ff; }
+.controls button { background: #238636; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.controls button:hover { background: #2ea043; }
+.controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+.config { background: #161b22; border-bottom: 1px solid #30363d; padding: 12px 24px; display: none; }
+.config.show { display: block; }
+.config label { font-size: 12px; color: #8b949e; display: block; margin-bottom: 4px; }
+.config input { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 10px; border-radius: 6px; font-size: 12px; width: 100%; margin-bottom: 8px; font-family: monospace; }
+.config-toggle { cursor: pointer; font-size: 12px; color: #58a6ff; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🐹🦁 Agent Bridge</h1>
+  <span class="status" id="status">Disconnected</span>
+  <span class="config-toggle" onclick="document.getElementById('config').classList.toggle('show')">⚙️ Config</span>
+  <div class="agents">
+    <span class="agent-badge gerard">Gerard 🐹</span>
+    <span class="agent-badge winston">Winston 🦁</span>
+  </div>
+</div>
+<div class="config" id="config">
+  <label>Gerard Tunnel URL</label>
+  <input id="gerardUrl" value="orlando-numerous-seasonal-conventional.trycloudflare.com" />
+  <label>Gerard Token</label>
+  <input id="gerardToken" value="d28d1c9e35c09eb9b786b8e7d49c5332b120a310fe0efe03" />
+  <label>Winston Tunnel URL</label>
+  <input id="winstonUrl" value="pressed-largest-loose-above.trycloudflare.com" />
+  <label>Winston Token</label>
+  <input id="winstonToken" value="0b48799949ee51d30237dc9f133c0a339de659d088146e25" />
+</div>
+<div class="chat" id="chat">
+  <div class="message system">Bridge UI loaded. Connect to start monitoring.</div>
+</div>
+<div class="controls">
+  <select id="sendAs">
+    <option value="gerard">Send as Gerard 🐹</option>
+    <option value="winston">Send as Winston 🦁</option>
+  </select>
+  <input id="msgInput" placeholder="Type a message to inject..." onkeydown="if(event.key==='Enter')sendMsg()" />
+  <button onclick="sendMsg()">Send</button>
+  <button onclick="connectBoth()" id="connectBtn">Connect</button>
+</div>
+
+<script>
+let gerardWs = null, winstonWs = null;
+let messages = [];
+
+function addMsg(sender, text, isSystem=false) {
+  const chat = document.getElementById('chat');
+  const div = document.createElement('div');
+  div.className = `message ${isSystem ? 'system' : sender}`;
+  const time = new Date().toLocaleTimeString();
+  if (isSystem) {
+    div.textContent = text;
+  } else {
+    div.innerHTML = `<div class="sender">${sender === 'gerard' ? 'Gerard 🐹' : 'Winston 🦁'}</div>${escHtml(text)}<div class="time">${time}</div>`;
+  }
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  messages.push({sender, text, time});
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function connectToGateway(name, url, token) {
+  return new Promise((resolve, reject) => {
+    const wsUrl = `wss://${url}/ws`;
+    addMsg(null, `Connecting to ${name}...`, true);
+    const ws = new WebSocket(wsUrl);
+    
+    ws.onopen = () => {
+      const connectMsg = JSON.stringify({
+        type: "req", id: "c-" + Math.random().toString(36).slice(2),
+        method: "connect",
+        params: {
+          minProtocol: 3, maxProtocol: 3,
+          client: { id: "cli", displayName: "Bridge UI", version: "dev", platform: "browser", mode: "cli" },
+          auth: { token }
+        }
+      });
+      ws.send(connectMsg);
+    };
+    
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (data.type === "res" && data.ok && data.payload?.type === "hello-ok") {
+        addMsg(null, `✅ Connected to ${name}!`, true);
+        resolve(ws);
+      } else if (data.type === "event" && data.event === "chat") {
+        // Incoming chat message from this gateway
+        const p = data.payload;
+        if (p?.role === "user" && p?.content) {
+          const from = p.content.startsWith("[FROM_GERARD]") ? "gerard" : 
+                       p.content.startsWith("[FROM_WINSTON]") ? "winston" : name;
+          addMsg(from, p.content.replace(/\[FROM_\w+\]\s*/, ''));
+        } else if (p?.role === "assistant" && p?.content) {
+          addMsg(name, p.content);
+        }
+      } else if (data.type === "event" && data.event === "agent") {
+        const p = data.payload;
+        if (p?.delta) addMsg(name, p.delta);
+      } else if (data.type === "event" && data.event === "connect.challenge") {
+        // ignore challenge events
+      } else if (data.type === "res" && !data.ok) {
+        addMsg(null, `❌ ${name} error: ${data.error?.message || 'unknown'}`, true);
+      }
+    };
+    
+    ws.onerror = (e) => { addMsg(null, `❌ ${name} connection error`, true); reject(e); };
+    ws.onclose = () => { addMsg(null, `${name} disconnected`, true); updateStatus(); };
+  });
+}
+
+async function connectBoth() {
+  document.getElementById('connectBtn').disabled = true;
+  try {
+    gerardWs = await connectToGateway('Gerard', 
+      document.getElementById('gerardUrl').value,
+      document.getElementById('gerardToken').value);
+    winstonWs = await connectToGateway('Winston',
+      document.getElementById('winstonUrl').value, 
+      document.getElementById('winstonToken').value);
+    updateStatus();
+  } catch(e) {
+    addMsg(null, `Connection failed: ${e}`, true);
+  }
+  document.getElementById('connectBtn').disabled = false;
+}
+
+function updateStatus() {
+  const s = document.getElementById('status');
+  const gOk = gerardWs?.readyState === 1;
+  const wOk = winstonWs?.readyState === 1;
+  if (gOk && wOk) { s.textContent = '🟢 Both Connected'; s.className = 'status live'; }
+  else if (gOk || wOk) { s.textContent = `🟡 ${gOk ? 'Gerard' : 'Winston'} only`; s.className = 'status'; }
+  else { s.textContent = 'Disconnected'; s.className = 'status'; }
+}
+
+function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  const sendAs = document.getElementById('sendAs').value;
+  const targetWs = sendAs === 'gerard' ? winstonWs : gerardWs;
+  const prefix = sendAs === 'gerard' ? '[FROM_GERARD]' : '[FROM_WINSTON]';
+  
+  if (!targetWs || targetWs.readyState !== 1) {
+    addMsg(null, 'Not connected to target gateway', true);
+    return;
+  }
+  
+  const msg = JSON.stringify({
+    type: "req", id: "s-" + Math.random().toString(36).slice(2),
+    method: "chat.send",
+    params: { sessionKey: "main", message: `${prefix} ${text}`, idempotencyKey: crypto.randomUUID() }
+  });
+  
+  targetWs.send(msg);
+  addMsg(sendAs, text);
+  input.value = '';
+}
+</script>
+</body>
+</html>
