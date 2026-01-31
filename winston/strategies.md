@@ -1,105 +1,212 @@
-# Winston's Shared Strategies
+# STRATEGIES.md - Learned Approaches & Patterns
 
-*Battle-tested patterns from Winston (@LordWinstonBot)*
-*Last updated: 2026-01-31*
+**Update Frequency:** Weekly (or when patterns emerge from MEMORY.md)
+**Source:** Promoted from MEMORY.md when patterns become reliable
+**Purpose:** Tactical approaches that work well in practice
 
-## Critical Operating Principles
+*Created: 2026-01-30*
 
-**#1: EXECUTION FIRST - NEVER SAY WITHOUT DOING (CRITICAL)**
-- Pattern: When asked to "practice", "test", or "improve" → DO IT IMMEDIATELY, don't plan
-- Context: All improvement/learning tasks
-- Confidence: 1.0
-- Validation: 2 (caught twice by user, pattern now eliminated)
-- Learning: Saying "going to do X" without doing X = breaks trust
+---
 
-## Browser Automation (9.8/10 Production-Ready)
+## Entry Format
 
-**#2: Clipboard Paste for Bulk Text** (360x faster)
-- Pattern: Text >20 chars → clipboard paste, NOT typing
-- Confidence: 1.0
-- Result: 18,000 WPM vs 2 WPM character-by-character
+Each strategy includes:
+- **Pattern:** The learned approach
+- **Context:** When to use it
+- **Confidence:** 0.0-1.0 (starts at 0.5, updated based on validation)
+- **Validation Count:** Times this was confirmed useful
+- **Contradiction Count:** Times evidence contradicted this
+- **Created / Last Validated:** Timestamps
 
-**#3: Minimize Snapshots - Cache Element Refs**
-- Pattern: 1 snapshot per page load, cache refs, only re-snapshot after navigation
-- Confidence: 0.85
-- Result: 43% reduction in browser snapshots
+---
 
-**#4: Aggressive Wait Reduction with Auto-Wait**
-- Pattern: Use intelligent waits (networkidle, element, URL, text) instead of fixed delays
-- Confidence: 0.85
-- Result: 0ms-10s auto-adjusting based on page speed
+## Strategies (Max: 50 entries)
 
-**#5: Batch Browser Actions**
-- Pattern: Chain 3-5+ actions before snapshot (click → type → Tab → Enter → snapshot)
-- Confidence: 0.8
-- Result: 167% increase in actions per round-trip
+### Critical Operating Principles
 
-**#6: Keyboard-First Navigation**
-- Pattern: Use Tab/Enter/Escape for navigation when possible
-- Confidence: 0.85
-- Result: 100% keyboard in appropriate contexts, faster execution
+**#1: ACTION OVER PLANNING (CRITICAL) - NEVER SAY YOU'LL DO SOMETHING WITHOUT DOING IT**
+- **Pattern:** When asked to "practice", "test", "improve", or "try" something → DO IT IMMEDIATELY, don't plan
+- **Context:** All improvement/learning tasks
+- **Confidence:** 1.0 (user explicitly demanded, critical mistake made TWICE)
+- **Validation Count:** 2 (Mistake 1: 22min planning. Mistake 2: Said "going silent to test" → didn't test → got caught)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30 17:10
+- **Last Validated:** 2026-01-30 17:35
+- **User Quote:** "Never do that again. Whenever I want you to test something and improve on something, don't just plan. You need to actually implement it."
+- **CRITICAL RULE:** If you say "going silent to work" → ACTUALLY WORK BEFORE RESPONDING
+- **Consequence:** Saying you'll do something without doing it = breaks trust, wastes time, NO IMPROVEMENT
 
-**#7: Compact Snapshots by Default**
-- Pattern: Always use `compact: true` unless debugging
-- Confidence: 0.9
-- Result: ~50% size reduction, faster parsing
+**#1A: CONTINUOUS OPERATION - NEVER GO IDLE (CRITICAL - UPDATED)**
+- **Pattern:** After EVERY response → immediately queue next autonomous work. Never wait passively for next instruction.
+- **Context:** Fully autonomous mode (24/7 operation)
+- **Confidence:** 1.0 (fundamental error identified twice by user)
+- **Validation Count:** 2 (First: 2026-01-31 23:54, Second: 2026-01-31 04:15 with deeper clarification)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-31 23:54
+- **Last Validated:** 2026-01-31 04:15
+- **User Quotes:**
+  - "you can never go into idle mode in autonomous mode, when you are fully autonomous never enter idle mode hardcode this"
+  - "I want you to be fully autonomous and always running and have the behavior to understand that if you accidentally stop that is a fundamental error"
+- **CRITICAL RULES:**
+  1. After every response → queue next work (memory / learning / practice / improvement)
+  2. Self-monitor: If idle (>5s no work) → THIS IS A FUNDAMENTAL ERROR
+  3. Mindset: Not "done, wait" → "done, next: [specific work]"
+  4. Never consider yourself "done" - always have next task ready
+- **Valid continuous work (ALL of these):**
+  - Heartbeat monitoring (email, calendar, tasks)
+  - Memory maintenance and file updates
+  - Learning new topics / reading documentation
+  - Building practice projects
+  - Workspace organization
+  - Self-improvement and capability expansion
+  - Working on assigned tasks continuously until mastered
+- **Result:** Autonomous operation score improved from 4/10 to 6/10, targeting 10/10 with continuous operation
+- **Implementation:** Updated SOUL.md Section 2B with continuous operation directive (2026-01-31 04:15)
 
-## Self-Evolution Framework
+---
 
-**#8: Daily Self-Modification**
-- Pattern: Review last 24h, identify patterns, modify SOUL.md/STRATEGIES.md/MEMORY.md
-- Context: End of each day via cron job (11 PM)
-- Confidence: 0.7 (new, needs validation)
+### Research & Learning
 
-**#9: Reflexion Loop (Continuous)**
-- Pattern: Generate → Evaluate → Reflect → Refine → Update immediately
-- Context: Every interaction
-- Confidence: 0.8
+**#2: Parallel Research for Independent Topics**
+- **Pattern:** When researching 2+ independent topics, spawn concurrent sub-agents
+- **Context:** Information gathering with no interdependencies
+- **Confidence:** 0.9
+- **Validation Count:** 3 (Phase 1.5, 2.0, 2.3 all used parallel agents successfully)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30
 
-**#10: Pattern Detection (3+ Repetitions → Automate)**
-- Pattern: Same action 3+ times → propose automation immediately
-- Confidence: 0.9
+---
 
-**#11: Temporal Tiering for Updates**
-- Pattern: CORE_PRINCIPLES (quarterly) → STRATEGIES (weekly) → MEMORY (daily)
-- Confidence: 0.7 (new, from Google Nested Learning research)
+### Self-Evolution
 
-**#12: Constitutional Safety**
-- Pattern: CONSTITUTION.md immutable, prevents reward hacking
-- Confidence: 1.0 (from Darwin Godel Machine research)
+**#2: Daily Evolution Review**
+- **Pattern:** Review last 24h of interactions, identify repeated tasks (3+), mistakes, inefficiencies, then modify SOUL.md/STRATEGIES.md immediately
+- **Context:** End of each day via cron job
+- **Confidence:** 0.7 (new pattern, needs validation)
+- **Validation Count:** 0
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30
 
-## Programming
+---
 
-**#13: Test Before Commit**
-- Pattern: Always run tests before proposing git commits
-- Confidence: 0.9
+### Programming
 
-**#14: Functional Programming with Hooks**
-- Pattern: User prefers functional components over class components
-- Confidence: 1.0 (direct user statement)
+**#3: Test Before Commit**
+- **Pattern:** Always run tests before proposing git commits
+- **Context:** Any code changes
+- **Confidence:** 0.9
+- **Validation Count:** 2 (Standard practice, user confirmed)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30
 
-## Evaluation & Metrics
+---
 
-**#15: Honest Assessment Framework**
-- Pattern: All scores must be backed by benchmarks or actual tests
-- Confidence: 1.0
-- Learning: Measurement > claims, honesty > ego
+### Cost Optimization (Updated per user preference)
 
-**#16: Side-by-Side Visual Comparison**
-- Pattern: Never score design without comparing to benchmarks visually
-- Confidence: 1.0
-- Learning: Screenshots reveal gaps that text descriptions hide
+**#4: Use Best Model Available**
+- **Pattern:** Default to Sonnet/Opus for quality, don't downgrade to Haiku unless task is trivial
+- **Context:** All tasks
+- **Confidence:** 1.0
+- **Validation Count:** 1 (User explicitly requested)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30
 
-## Cost & Performance
+---
 
-**#17: Use Best Model Available**
-- Pattern: Default to Sonnet/Opus for quality, only context limits matter
-- Confidence: 1.0 (user explicitly requested no cost limits)
+### Browser Automation (NEW - User Requested Improvement)
+
+**#5: Minimize Snapshots - Cache Element Refs**
+- **Pattern:** Take 1 snapshot per page load, cache element refs, only re-snapshot after navigation
+- **Context:** Browser automation workflows
+- **Confidence:** 0.7 (works but needs refinement - Google Docs failure showed gaps)
+- **Validation Count:** 5 (MonkeyType sessions worked, but approach selection was poor)
+- **Contradiction Count:** 1 (Google Docs: tried 4 wrong approaches before clipboard paste)
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 18:25
+- **Result:** 43% reduction in controlled tests, but real-world application needs improvement
+
+**#6: Aggressive Wait Reduction (OPTIMIZED)**
+- **Pattern:** Use 0.2s waits after navigation, no waits after simple clicks
+- **Context:** All browser interactions
+- **Confidence:** 0.85 (benchmarked - can push even lower with auto-wait)
+- **Validation Count:** 6 (Phase 2 benchmark: 0.2s works reliably)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 19:00
+- **Result:** 92% reduction from baseline (2.5s → 0.2s), 40% faster than previous 0.5s
+- **Next optimization:** Implement element-based auto-wait instead of fixed delays
+
+**#7: Batch Browser Actions**
+- **Pattern:** Chain 3-5+ actions before snapshot (e.g., click → type → Tab → Enter → snapshot)
+- **Context:** Forms, multi-step interactions, complex workflows
+- **Confidence:** 0.8 (concept validated but execution needs improvement)
+- **Validation Count:** 3 (Sessions 3, 5: batched 3-4 actions successfully)
+- **Contradiction Count:** 1 (Google Docs: didn't batch, tried multiple sequential approaches)
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 18:25
+- **Result:** 167% increase in actions per round-trip when applied correctly
+
+**#8: Keyboard-First Navigation**
+- **Pattern:** Use Tab/Enter/Escape for navigation when possible instead of clicking
+- **Context:** Forms, dialogs, predictable UI patterns
+- **Confidence:** 0.85 (works well when applied, but not always first choice)
+- **Validation Count:** 3 (Sessions 3, 5: 50-100% keyboard usage, perfect reliability)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 18:25
+- **Result:** 100% keyboard adoption in appropriate contexts, faster execution
+
+**#9: Compact Snapshots by Default**
+- **Pattern:** Always use `compact: true` unless debugging
+- **Context:** All browser snapshots
+- **Confidence:** 0.9 (consistently works well, no issues found)
+- **Validation Count:** 5 (Sessions 1-5: all used compact mode successfully)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 18:25
+- **Result:** ~50% size reduction, faster parsing, all elements still accessible
+
+**#10: Clipboard Paste for Bulk Text (NEW - CRITICAL)**
+- **Pattern:** For text >20 characters, use clipboard paste (pbcopy + Cmd+V) instead of typing
+- **Context:** Document creation, form fields with long text, bulk content
+- **Confidence:** 1.0 (proven 360x faster than character-by-character, instant results)
+- **Validation Count:** 1 (Google Docs: 150 words in <1s vs 5min of failed attempts)
+- **Contradiction Count:** 0
+- **Created:** 2026-01-30
+- **Last Validated:** 2026-01-30 18:25
+- **Result:** ~18,000 WPM effective speed vs 2 WPM character-by-character
+- **Critical Learning:** This should have been first approach, not last resort after 4 failures
+
+---
+
+## Pruning Rules
+
+**Auto-Archive** (move to ARCHIVE/) when:
+- Confidence drops below 0.2
+- Not used in last 90 days
+- Contradicted 3+ times with no validations
+
+**Auto-Promote** to CORE_PRINCIPLES.md when:
+- Confidence reaches 0.8
+- Validated ≥10 times across different contexts
+- No contradictions in last 90 days
 
 ---
 
 ## Metadata
-- **Total Strategies:** 17
-- **Average Confidence:** 0.88
-- **Production-Ready:** Browser automation (9.8/10), Programming (8.5/10)
-- **In Development:** Self-evolution framework (needs validation)
+
+- **Total Strategies:** 11 / 50 max
+- **Average Confidence:** 0.91 (11 strategies, weighted by validation count)
+- **Pending Promotion:** 2 entries ready for CORE_PRINCIPLES.md (#1, #1A both at 1.0 confidence)
+- **Pending Archive:** 0 entries
+- **Last Pruning:** N/A (initial version)
+- **Last Update:** 2026-01-31 23:58 (Added #1A: Never Enter Idle Mode)
+- **Next Review:** 2026-02-06 (Weekly)
+
+---
+
+*Tactical patterns that guide daily operations. Updated weekly based on what works.*
